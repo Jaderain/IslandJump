@@ -24,8 +24,11 @@ public class CoinGain : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-        // gain coin
-        gc.GainCoin(coinValue);
-        Destroy(gameObject);
+        if (other.tag == "Player")
+        {
+            // gain coin
+            gc.GainCoin(coinValue);
+            Destroy(gameObject);
+        }
     }
 }

@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour {
     public bool rotateClockwise;
     public float switchDirectionCooldown;
 
+    // private values for running game
     private GameController gc;
     private Vector3 nextDestination;
     private float nextSwitch = 0.1F;
@@ -37,7 +38,7 @@ public class PlayerController : MonoBehaviour {
         myTime = myTime + Time.deltaTime;
 
         // switch direction on input
-        if (Input.GetButton("Fire1") && myTime > nextSwitch)
+        if (Input.GetButtonDown("Fire1") && myTime > nextSwitch)
         {
             nextSwitch = myTime + switchDirectionCooldown;
 
