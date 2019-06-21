@@ -34,10 +34,9 @@ public class DestroyByContact : MonoBehaviour {
             Destroy(gameObject);
             Destroy(other.gameObject); // dstory player!
 
+            Debug.Log("Current Plyaer is destroyed");
 
             // TODO: GAMEOVER
-            // TODO: restart
-            // TODO: HUD for details
             // gameController.Gameover();
 
         }

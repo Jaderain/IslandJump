@@ -27,7 +27,7 @@ public class CoinGain : MonoBehaviour {
         if (other.tag == "Player")
         {
             // gain coin
-            gc.GainCoin(coinValue);
+            gc.gainCoin(coinValue);
             Destroy(gameObject);
         }
     }

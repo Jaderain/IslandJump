@@ -16,7 +16,6 @@ public class SpawnProjectiles : MonoBehaviour {
 	
     IEnumerator spawnProjectiles()
     {
-        // TODO: Balance Issue - spawning on the line of movement near-impossible to dodge
         while (true)
         {
             // pick one of the range in random

@@ -7,6 +7,7 @@ TagManager:
   - Platform
   - Coin
   - Boundary
+  - Canvas
   layers:
   - Default
   - TransparentFX

@@ -7,25 +7,26 @@ public class PlayerController : MonoBehaviour {
     // get inputs for this method parameter
     public float speed;
     public Vector3 offset;
-    public bool rotateClockwise;
-    public float switchDirectionCooldown;
 
     // private values for running game
     private GameController gc;
     private Vector3 nextDestination;
-    private float nextSwitch = 0.1F;
-    private float myTime = 0.0F;
+    private bool rotateClockwise;
 
     // Use this for initialization
     void Start () {
+        // init variables and load controller
+        rotateClockwise = true;
+
         GameObject gameCtonrollerObject = GameObject.FindWithTag("GameController");
         if (gameCtonrollerObject != null)
         {
             gc = gameCtonrollerObject.GetComponent<GameController>();
         }
+
         if (gc == null)
         {
-            Debug.Log("gameController is missing!");
+            Debug.LogError("gameController is missing!");
         }
 
         // first destination - first on the list
@@ -35,19 +36,7 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        myTime = myTime + Time.deltaTime;
 
-        // switch direction on input
-        if (Input.GetButtonDown("Fire1") && myTime > nextSwitch)
-        {
-            nextSwitch = myTime + switchDirectionCooldown;
-
-            rotateClockwise = !rotateClockwise;
-            nextLocation(true);
-
-            nextSwitch = nextSwitch - myTime;
-            myTime = 0.0F;
-        }
     }
 
     // Called based on framerates;
@@ -89,5 +78,12 @@ public class PlayerController : MonoBehaviour {
                 }
             }
         }
+    }
+
+    public void reverseRotate()
+    {
+        rotateClockwise = !rotateClockwise;
+        nextLocation(true);
+        Debug.Log("Reversing course. rotateClockwise[" + rotateClockwise + "]");
     }
 }

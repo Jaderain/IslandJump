@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
 
@@ -28,18 +29,45 @@ public class GameController : MonoBehaviour {
     public float projectileRespawnCooldown;
     public SpawnLocAndRotation[] projectileSpawnLoc;
 
+    // status properties
+    public bool gameOverProperty { get; private set; }
+
     // in game scores and stuff
     private int score;
     private int lastCoinIndex;
+
+    // other game objects
+    private Text scoreText;
+    private Text gameOverText;
 
     void Start()
     {
         // Use this for initialization
         score = 0;
         lastCoinIndex = 0;
+        gameOverProperty = false;
 
         // init platforms
         initPlatforms();
+
+        // call all gameobject needed
+        // call UI and init the values
+        var canvasItem = GameObject.FindWithTag("Canvas").GetComponent<Canvas>();
+        var textItems = canvasItem.GetComponentsInChildren<Text>();
+
+        foreach (var item in textItems)
+        {
+            if (item.name == "ScoreText")
+            {
+                scoreText = item;
+                scoreText.text = "0";
+            }
+            else if (item.name == "GameOverText")
+            {
+                gameOverText = item;
+                gameOverText.enabled = false;
+            }
+        }
 
         // spawn coins
         // TODO: move to game start group? seperate init and game start?
@@ -51,7 +79,6 @@ public class GameController : MonoBehaviour {
     void Update()
     {
         // spawn coin every once in awhile on the platform
-
     }
 
     void initPlatforms()
@@ -92,12 +119,29 @@ public class GameController : MonoBehaviour {
         Instantiate(coinObject, islandSpawns[lastCoinIndex] + coinOffset, coinObject.transform.rotation);
     }
 
-    public void GainCoin(int scoreValue)
+    /* public method to be called from other scripts for updates */
+    public void spawnPlayer()
+    {
+        // TODO: SPAWN PLAYER instead start with default asset
+    }
+
+    public void gainCoin(int scoreValue)
     {
         score += scoreValue;
+        scoreText.text = score.ToString();
 
         Debug.Log("Coin Gained. CurrentScore[" + score + "]");
 
         StartCoroutine(spawnCoin());
+    }
+    
+    public void gameOverNow()
+    {
+        // display game over text
+        gameOverProperty = true;
+        gameOverText.enabled = true;
+
+        // Allow restart of the game
+        // TODO: finish game over screen?
     }
 }
