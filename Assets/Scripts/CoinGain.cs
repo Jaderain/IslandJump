@@ -11,15 +11,8 @@ public class CoinGain : MonoBehaviour {
     // Use this for initialization
     void Start ()
     {
-        GameObject gameCtonrollerObject = GameObject.FindWithTag("GameController");
-        if (gameCtonrollerObject != null)
-        {
-            gc = gameCtonrollerObject.GetComponent<GameController>();
-        }
-        if (gc == null)
-        {
-            Debug.Log("gameController is missing!");
-        }
+        // gain game controller
+        gc = Tools.gc;
     }
 
     private void OnTriggerEnter(Collider other)

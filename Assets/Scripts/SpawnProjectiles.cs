@@ -18,6 +18,8 @@ public class SpawnProjectiles : MonoBehaviour {
     {
         while (true)
         {
+            // TODO: Balance - if hazards respawn too close to edge, have barely any time to dodge. Smart spawn to prevent this
+
             // pick one of the range in random
             float beamLengthHalf = beamLength / 2.0f;
             Vector3 spawnPosition = new Vector3(Random.Range((transform.position.x - beamLengthHalf), (transform.position.x + beamLengthHalf)), transform.position.y, transform.position.z);

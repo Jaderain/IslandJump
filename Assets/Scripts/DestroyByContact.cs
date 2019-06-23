@@ -8,20 +8,12 @@ public class DestroyByContact : MonoBehaviour {
     public GameObject playerExplosion;
     public int scoreValue;
 
-    private GameController gameController;
+    private GameController gc;
 
     private void Start()
     {
-        GameObject gameCtonrollerObject = GameObject.FindWithTag("GameController");
-        if (gameCtonrollerObject != null)
-        {
-            gameController = gameCtonrollerObject.GetComponent<GameController>();
-        }
-        if (gameController == null)
-        {
-            Debug.Log("gameController is missing!");
-        }
-
+        // get game controller
+        gc = Tools.gc;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -31,13 +23,14 @@ public class DestroyByContact : MonoBehaviour {
             if (explosion != null) Instantiate(explosion, transform.position, transform.rotation);
             if (playerExplosion != null) Instantiate(playerExplosion, other.transform.position, other.transform.rotation);
 
+            // game over!
+            gc.gameOverNow();
+
             Destroy(gameObject);
             Destroy(other.gameObject); // dstory player!
 
-            Debug.Log("Current Plyaer is destroyed");
-
-            // TODO: GAMEOVER
-            // gameController.Gameover();
+            Debug.Log("Current Player is destroyed");
+            
 
         }
     }

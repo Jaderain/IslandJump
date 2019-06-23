@@ -5,28 +5,15 @@ using UnityEngine;
 public class InputController : MonoBehaviour {
 
     public float switchDirectionCooldown;
-    
+
     private float nextSwitch = 0.1F;
     private float myTime = 0.0F;
-    private PlayerController currentPlayer;
     private GameController gc;
 
     // Use this for initialization
     void Start () {
-        // set current player
-        setCurrentPlayer();
-
         // get game object
-        GameObject gameCtonrollerObject = GameObject.FindWithTag("GameController");
-        if (gameCtonrollerObject != null)
-        {
-            gc = gameCtonrollerObject.GetComponent<GameController>();
-        }
-
-        if (gc == null)
-        {
-            Debug.LogError("gameController is missing!");
-        }
+        gc = Tools.gc;
     }
 
     // Update is called once per frame
@@ -42,31 +29,19 @@ public class InputController : MonoBehaviour {
             // check if game over
             if (gc.gameOverProperty)
             {
-                // TODO: restart the game
-
+                gc.playerStart();
             }
             else
             {
-                // reverse curent projectile
-                currentPlayer.reverseRotate();
+                // reverse curent player, if exists
+                if (gc.currentPlayerContProperty != null)
+                {
+                    gc.currentPlayerContProperty.reverseRotate();
+                }
             }
             
             nextSwitch = nextSwitch - myTime;
             myTime = 0.0F;
-        }
-    }
-
-    public void setCurrentPlayer()
-    {
-        GameObject playerObject = GameObject.FindWithTag("Player");
-        if (playerObject != null)
-        {
-            currentPlayer = playerObject.GetComponent<PlayerController>();
-        }
-
-        if (currentPlayer == null)
-        {
-            Debug.LogError("Player is missing!");
         }
     }
 }

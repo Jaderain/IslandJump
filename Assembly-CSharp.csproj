@@ -69,6 +69,7 @@
     <Compile Include="Assets\Scripts\Mover.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\SpawnProjectiles.cs" />
+    <Compile Include="Assets\Scripts\Tools.cs" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>C:/Users/brand/Documents/Unity/IslandJump/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>

@@ -18,16 +18,8 @@ public class PlayerController : MonoBehaviour {
         // init variables and load controller
         rotateClockwise = true;
 
-        GameObject gameCtonrollerObject = GameObject.FindWithTag("GameController");
-        if (gameCtonrollerObject != null)
-        {
-            gc = gameCtonrollerObject.GetComponent<GameController>();
-        }
-
-        if (gc == null)
-        {
-            Debug.LogError("gameController is missing!");
-        }
+        // get game controller
+        gc = Tools.gc;
 
         // first destination - first on the list
         nextDestination = gc.islandSpawns[0];

@@ -13,6 +13,9 @@ public class GameController : MonoBehaviour {
         public Vector3 rotation;
     }
 
+    // player prefab
+    public GameObject playerPrefab;
+
     // island Setup
     public GameObject islandObject;
     public Vector3[] islandSpawns;
@@ -29,24 +32,27 @@ public class GameController : MonoBehaviour {
     public float projectileRespawnCooldown;
     public SpawnLocAndRotation[] projectileSpawnLoc;
 
-    // status properties
+    // accessible properties
     public bool gameOverProperty { get; private set; }
-
+    public PlayerController currentPlayerContProperty { get; private set; }
+    
     // in game scores and stuff
     private int score;
     private int lastCoinIndex;
 
-    // other game objects
+    // in game other UI
     private Text scoreText;
     private Text gameOverText;
 
     void Start()
     {
         // Use this for initialization
+        currentPlayerContProperty = null;
         score = 0;
         lastCoinIndex = 0;
         gameOverProperty = false;
 
+        // Stage Initialization here
         // init platforms
         initPlatforms();
 
@@ -70,9 +76,14 @@ public class GameController : MonoBehaviour {
         }
 
         // spawn coins
-        // TODO: move to game start group? seperate init and game start?
         Debug.Log("Game Started, Init done");
         StartCoroutine(spawnCoin());
+
+        // player start now
+        // TODO: Make Game start instead? press button to start the game instead
+        // TODO: Enviornment setup at the start 
+        // TODO: donce it is done, show that the game is ready to start (return point here after game over)
+        playerStart();
     }
 
     // Update is called once per frame
@@ -80,7 +91,7 @@ public class GameController : MonoBehaviour {
     {
         // spawn coin every once in awhile on the platform
     }
-
+    
     void initPlatforms()
     {
         // create platform on each vector 3 inputs
@@ -108,6 +119,7 @@ public class GameController : MonoBehaviour {
     
     IEnumerator spawnCoin()
     {
+        // TODO: Balance - Coin sometimes spawns TOO close to player, need to spawn to other side of the player
         Debug.Log("Spawning Coin Called");
 
         // spawn coins based on island location, based on rates
@@ -120,9 +132,21 @@ public class GameController : MonoBehaviour {
     }
 
     /* public method to be called from other scripts for updates */
-    public void spawnPlayer()
+    public void playerStart()
     {
-        // TODO: SPAWN PLAYER instead start with default asset
+        // Spawn a player 
+        if (currentPlayerContProperty == null)
+        {
+            // reset values
+            score = 0;
+            scoreText.text = "0";
+            gameOverProperty = false;
+            gameOverText.enabled = false;
+
+            // spawn a plyaer
+            var player = Instantiate(playerPrefab, new Vector3(0, 1, 3), Quaternion.Euler(new Vector3(0, 45, 0)));
+            currentPlayerContProperty = player.GetComponent<PlayerController>();
+        }
     }
 
     public void gainCoin(int scoreValue)
@@ -141,7 +165,6 @@ public class GameController : MonoBehaviour {
         gameOverProperty = true;
         gameOverText.enabled = true;
 
-        // Allow restart of the game
-        // TODO: finish game over screen?
+        // TODO: check to see if the game is ready to be restarted, delay needed for each restart
     }
 }
