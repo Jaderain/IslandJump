@@ -8,6 +8,7 @@ TagManager:
   - Coin
   - Boundary
   - Canvas
+  - _DEBUG
   layers:
   - Default
   - TransparentFX

@@ -30,8 +30,6 @@ public class DestroyByContact : MonoBehaviour {
             Destroy(other.gameObject); // dstory player!
 
             Debug.Log("Current Player is destroyed");
-            
-
         }
     }
 }

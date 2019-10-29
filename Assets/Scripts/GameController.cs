@@ -4,53 +4,35 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
-
-    [System.Serializable]
-    public class SpawnLocAndRotation
-    {
-        public Vector3 spawnPivot;
-        public float beamLength;
-        public Vector3 rotation;
-    }
-
+    
     // player prefab
     public GameObject playerPrefab;
-
-    // island Setup
-    public GameObject islandObject;
-    public Vector3[] islandSpawns;
-
+    
     // coin spawn Setup
     public GameObject coinObject;
     public Vector3 coinOffset;
     public float coinRespawnCooldown;
-
-    // projectile Setup
-    public bool projectileSpawnEnabled;
-    public GameObject hazardRespawnObject;
-    public GameObject projectileObject;
-    public float projectileRespawnCooldown;
-    public SpawnLocAndRotation[] projectileSpawnLoc;
-
+    
     // accessible properties
+    public int numOfCoins { get; private set; }
+    public bool gameReadyToStart { get; private set; }
     public bool gameOverProperty { get; private set; }
     public PlayerController currentPlayerContProperty { get; private set; }
     
     // in game scores and stuff
     private int score;
-    private int lastCoinIndex;
 
     // in game other UI
     private Text scoreText;
     private Text gameOverText;
-
+   
     void Start()
     {
         // Use this for initialization
         currentPlayerContProperty = null;
         score = 0;
-        lastCoinIndex = 0;
         gameOverProperty = false;
+        gameReadyToStart = false;
 
         // Stage Initialization here
         // init platforms
@@ -77,7 +59,6 @@ public class GameController : MonoBehaviour {
 
         // spawn coins
         Debug.Log("Game Started, Init done");
-        StartCoroutine(spawnCoin());
 
         // player start now
         // TODO: Make Game start instead? press button to start the game instead
@@ -94,42 +75,50 @@ public class GameController : MonoBehaviour {
     
     void initPlatforms()
     {
-        // create platform on each vector 3 inputs
-        foreach (Vector3 item in islandSpawns)
-        {
-            Instantiate(islandObject, item, Quaternion.Euler(new Vector3(0, 45, 0)));
-        }
-
-        // TODO: move this projectile enabled to each individual spawns
-        if (projectileSpawnEnabled)
-        {
-            // TODO: all projectile spawn at ONCE - should be spawned one at a time or less than 4
-            // create hazard respawn points
-            foreach (var item in projectileSpawnLoc)
-            {
-                var spawnedItem = Instantiate(hazardRespawnObject, item.spawnPivot, Quaternion.Euler(item.rotation));
-
-                // set script variables
-                spawnedItem.GetComponent<SpawnProjectiles>().beamLength = item.beamLength;
-                spawnedItem.GetComponent<SpawnProjectiles>().projectileObject = projectileObject;
-                spawnedItem.GetComponent<SpawnProjectiles>().projectileRespawnCooldown = projectileRespawnCooldown;
-            }
-        }
+        // TODO : move to islandScroller
+        // start corutines
+        StartCoroutine(spawnCoin());
+        //  TODO: StartCoroutine(spawnProjectiles());
     }
-    
+
     IEnumerator spawnCoin()
     {
-        // TODO: Balance - Coin sometimes spawns TOO close to player, need to spawn to other side of the player
-        Debug.Log("Spawning Coin Called");
+        while (true)
+        {
+            if (gameReadyToStart && numOfCoins == 0)
+            {
+                Debug.Log("Spawning Coin Called");
 
-        // spawn coins based on island location, based on rates
-        yield return new WaitForSeconds(coinRespawnCooldown);
-        lastCoinIndex = (lastCoinIndex + Random.Range(1, islandSpawns.Length)) % islandSpawns.Length;
-        
-        Debug.Log("Wait Done - Creating Coin on Index[" + lastCoinIndex + "]");
-        
-        Instantiate(coinObject, islandSpawns[lastCoinIndex] + coinOffset, coinObject.transform.rotation);
+                /* TODO
+                // pick a location that is not the destination and the one right before
+                int[] excludeThis = { currentPlayerContProperty.currentDestinationIndex, currentPlayerContProperty.nextDestinationIndex };
+                int nextCoinIndex = Tools.randomNumberExcept(islandSpawns.Length, excludeThis);
+                Instantiate(coinObject, islandSpawns[nextCoinIndex] + coinOffset, coinObject.transform.rotation);
+                numOfCoins++;
+                */
+            }
+
+            // spawn coins based on island location, based on rates
+            yield return new WaitForSeconds(coinRespawnCooldown);
+        }
     }
+
+    /* TODO: MOVE
+    IEnumerator spawnProjectiles()
+    {
+        while (true)
+        {
+            if (gameReadyToStart)
+            {
+                // pick one at random
+                spawnLocations[Random.Range(0, spawnLocations.Count)].spawnRandomly();
+            }
+
+            // spawn projectile based on island location, based on rates
+            yield return new WaitForSeconds(projectileRespawnCooldown);
+        }
+    }
+    */
 
     /* public method to be called from other scripts for updates */
     public void playerStart()
@@ -147,16 +136,18 @@ public class GameController : MonoBehaviour {
             var player = Instantiate(playerPrefab, new Vector3(0, 1, 3), Quaternion.Euler(new Vector3(0, 45, 0)));
             currentPlayerContProperty = player.GetComponent<PlayerController>();
         }
+
+        // Game is ready to start
+        gameReadyToStart = true;
     }
 
     public void gainCoin(int scoreValue)
     {
         score += scoreValue;
         scoreText.text = score.ToString();
-
-        Debug.Log("Coin Gained. CurrentScore[" + score + "]");
-
-        StartCoroutine(spawnCoin());
+        numOfCoins--;
+        
+        Debug.Log("Coin Gained. CurrentScore[" + score + "], coinNum["  + numOfCoins + "]");
     }
     
     public void gameOverNow()

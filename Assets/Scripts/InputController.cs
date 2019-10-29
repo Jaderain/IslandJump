@@ -33,11 +33,9 @@ public class InputController : MonoBehaviour {
             }
             else
             {
-                // reverse curent player, if exists
-                if (gc.currentPlayerContProperty != null)
-                {
-                    gc.currentPlayerContProperty.reverseRotate();
-                }
+                // get game controller
+                var iScroller = gc.GetComponent<islandScroller>();
+                iScroller.scrollspeed = iScroller.scrollspeed * -1.0f;
             }
             
             nextSwitch = nextSwitch - myTime;

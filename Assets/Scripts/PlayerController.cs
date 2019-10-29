@@ -4,78 +4,21 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
     
-    // get inputs for this method parameter
-    public float speed;
-    public Vector3 offset;
-
     // private values for running game
     private GameController gc;
-    private Vector3 nextDestination;
-    private bool rotateClockwise;
 
     // Use this for initialization
     void Start () {
-        // init variables and load controller
-        rotateClockwise = true;
-
         // get game controller
         gc = Tools.gc;
 
         // first destination - first on the list
-        nextDestination = gc.islandSpawns[0];
+        // TODO: nextDestination = gc.islandSpawns[0];
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
 
-    }
-
-    // Called based on framerates;
-    private void FixedUpdate()
-    {
-        // update next destination
-        nextLocation(false);
-
-        // Move our position a step closer to the target.
-        float step = speed * Time.deltaTime; // calculate distance to move
-        transform.position = Vector3.MoveTowards(transform.position, nextDestination + offset, step);
-    }
-
-    private void nextLocation(bool immediateChange)
-    {
-        // Check if the position of the cube and sphere are approximately equal.
-        if (immediateChange || Vector3.Distance(transform.position, nextDestination + offset) < 0.001f)
-        {
-            for (int i = 0; i < gc.islandSpawns.Length; i++)
-            {
-                if (gc.islandSpawns[i] == nextDestination)
-                {
-                    int nextDestinationIndex;
-
-                    if (rotateClockwise)
-                    {
-                        if (i == gc.islandSpawns.Length - 1) nextDestinationIndex = 0;
-                        else nextDestinationIndex = i + 1;
-                    }
-                    else
-                    {
-                        if (i == 0) nextDestinationIndex = gc.islandSpawns.Length - 1;
-                        else nextDestinationIndex = i - 1;
-                    }
-
-                    // reached destination, get the next one in the list
-                    nextDestination = gc.islandSpawns[nextDestinationIndex];
-                    break;
-                }
-            }
-        }
-    }
-
-    public void reverseRotate()
-    {
-        rotateClockwise = !rotateClockwise;
-        nextLocation(true);
-        Debug.Log("Reversing course. rotateClockwise[" + rotateClockwise + "]");
     }
 }
