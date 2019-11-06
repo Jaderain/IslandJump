@@ -386,7 +386,7 @@ GameObject:
   - component: {fileID: 534669903}
   m_Layer: 0
   m_Name: Main Camera
-  m_TagString: Untagged
+  m_TagString: Camera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -963,6 +963,7 @@ GameObject:
   - component: {fileID: 1585402407}
   - component: {fileID: 1585402408}
   - component: {fileID: 1585402409}
+  - component: {fileID: 1585402410}
   m_Layer: 0
   m_Name: GameController
   m_TagString: GameController
@@ -1010,7 +1011,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d85d95741e06d42a0645bc97bde176, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  switchDirectionCooldown: 0.1
+  inputCooldown: 0.1
+  teleportDistance: {x: 0, y: 0, z: -3}
 --- !u!114 &1585402408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1049,12 +1051,24 @@ MonoBehaviour:
   projectileObject: {fileID: 1582351743077370, guid: f12d2bd0516ecff4eac434aa480a079d,
     type: 2}
   inputSpawnPoint:
-  - spawnMin: {x: -10, y: 1, z: -20}
-    spawnMax: {x: -10, y: 1, z: 20}
+  - spawnMin: {x: -10, y: 1, z: 5}
+    spawnMax: {x: -10, y: 1, z: 25}
     rotation: {x: 0, y: 90, z: 0, w: 90}
-  - spawnMin: {x: 10, y: 1, z: -20}
-    spawnMax: {x: 10, y: 1, z: 20}
+  - spawnMin: {x: 10, y: 1, z: 5}
+    spawnMax: {x: 10, y: 1, z: 25}
     rotation: {x: 0, y: -90, z: 0, w: 90}
+--- !u!114 &1585402410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1585402404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea4c33af690527d4381c7c32a1b4c5c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraSpeed: 45
 --- !u!1 &1594734920
 GameObject:
   m_ObjectHideFlags: 0

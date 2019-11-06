@@ -9,6 +9,7 @@ TagManager:
   - Boundary
   - Canvas
   - _DEBUG
+  - Camera
   layers:
   - Default
   - TransparentFX

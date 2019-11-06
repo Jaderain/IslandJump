@@ -4,16 +4,21 @@ using UnityEngine;
 
 public class InputController : MonoBehaviour {
 
-    public float switchDirectionCooldown;
+    public float inputCooldown;
+    public Vector3 teleportDistance;
 
     private float nextSwitch = 0.1F;
     private float myTime = 0.0F;
     private GameController gc;
+    private islandScroller isc;
 
     // Use this for initialization
     void Start () {
         // get game object
         gc = Tools.gc;
+
+        // get game controller
+        isc = gc.GetComponent<islandScroller>();
     }
 
     // Update is called once per frame
@@ -24,7 +29,7 @@ public class InputController : MonoBehaviour {
         // switch direction on input
         if (Input.GetButtonDown("Fire1") && myTime > nextSwitch)
         {
-            nextSwitch = myTime + switchDirectionCooldown;
+            nextSwitch = myTime + inputCooldown;
 
             // check if game over
             if (gc.gameOverProperty)
@@ -33,9 +38,7 @@ public class InputController : MonoBehaviour {
             }
             else
             {
-                // get game controller
-                var iScroller = gc.GetComponent<islandScroller>();
-                iScroller.scrollspeed = iScroller.scrollspeed * -1.0f;
+                isc.teleport(teleportDistance); 
             }
             
             nextSwitch = nextSwitch - myTime;

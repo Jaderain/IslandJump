@@ -16,6 +16,9 @@ public class islandScroller : MonoBehaviour {
     private islandLinkdList head;
     private islandLinkdList tail;
 
+    private GameController gc;
+    private CameraController cc;
+
     class islandLinkdList
     {
         public islandLinkdList prev;
@@ -39,9 +42,16 @@ public class islandScroller : MonoBehaviour {
             next = inputNext;
         }
     }
+
     // Use this for initialization
     void Start()
     {
+        // get game object
+        gc = Tools.gc;
+
+        // get game controller
+        cc = gc.GetComponent<CameraController>();
+
         // spawn islandObjects of given
         foreach (Vector3 item in islandSpawnsDefaultLocation)
         {
@@ -61,13 +71,24 @@ public class islandScroller : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        // move other stuff
+        moveGameObejects(Vector3.forward * scrollspeed);
+    }
+
+    public void teleport(Vector3 teleportVector)
+    {
+        moveGameObejects(teleportVector);
+        cc.cameraMovementDelayZ(teleportVector);
+    }
+
+    private void moveGameObejects(Vector3 moveThisMuch)
+    {
+        // move all respawn items 
         var respawns = GameObject.FindGameObjectsWithTag("Respawn");
         foreach (GameObject respawn in respawns)
         {
-            respawn.transform.position += Vector3.forward * scrollspeed;
+            respawn.transform.position += moveThisMuch;
         }
-        
+
         // move the islands
         var traverse = head;
         while (traverse != null)
@@ -98,26 +119,28 @@ public class islandScroller : MonoBehaviour {
             }
             else
             {
-                traverse.island.transform.position += Vector3.forward * scrollspeed;
+                traverse.island.transform.position += moveThisMuch;
             }
 
             traverse = traverse.prev;
         }
-        
+
         // see if last one is below 2nd to last element or the other way
         // then respawn
-        if (head.island.transform.position.z
-            <= islandSpawnsDefaultLocation[1].z)
+        while (head.island.transform.position.z <= islandSpawnsDefaultLocation[1].z)
         {
-            addIslandToGraph(true, islandSpawnsDefaultLocation[0]);
+            addIslandToGraph(true, head.island.transform.position + new Vector3(0,0,4)); // TODO: fix hardcoded value here
         }
 
+        /*
+         * moving backwards
         if (tail.island.transform.position.z
             >= islandSpawnsDefaultLocation[islandSpawnsDefaultLocation.Length - 2].z)
         {
             addIslandToGraph(false, islandSpawnsDefaultLocation[islandSpawnsDefaultLocation.Length - 1]);
         }
-        
+        */
+
         /*
         // DEBUG: for debug purposes
         traverse = head;
