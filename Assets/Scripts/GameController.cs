@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,19 +9,17 @@ public class GameController : MonoBehaviour {
     // player prefab
     public GameObject playerPrefab;
     
-    // coin spawn Setup
-    public GameObject coinObject;
-    public Vector3 coinOffset;
-    public float coinRespawnCooldown;
-    
     // accessible properties
-    public int numOfCoins { get; private set; }
     public bool gameReadyToStart { get; private set; }
+    // public bool gameMenuProperty { get; private set; } TODO: Menu option
     public bool gameOverProperty { get; private set; }
     public PlayerController currentPlayerContProperty { get; private set; }
-    
+
+    // simple game properties
+    public float delayBeforeGameStarts;
+
     // in game scores and stuff
-    private int score;
+    private float score;
 
     // in game other UI
     private Text scoreText;
@@ -31,8 +30,8 @@ public class GameController : MonoBehaviour {
         // Use this for initialization
         currentPlayerContProperty = null;
         score = 0;
-        gameOverProperty = false;
         gameReadyToStart = false;
+        gameOverProperty = false;
 
         // Stage Initialization here
         // init platforms
@@ -48,7 +47,7 @@ public class GameController : MonoBehaviour {
             if (item.name == "ScoreText")
             {
                 scoreText = item;
-                scoreText.text = "0";
+                scoreUpdate(false, 0);
             }
             else if (item.name == "GameOverText")
             {
@@ -64,98 +63,74 @@ public class GameController : MonoBehaviour {
         // TODO: Make Game start instead? press button to start the game instead
         // TODO: Enviornment setup at the start 
         // TODO: donce it is done, show that the game is ready to start (return point here after game over)
+
+        // ready to start;
+        gameReadyToStart = true;
         playerStart();
     }
 
     // Update is called once per frame
     void Update()
     {
-        // spawn coin every once in awhile on the platform
+
     }
     
     void initPlatforms()
     {
-        // TODO : move to islandScroller
-        // start corutines
-        StartCoroutine(spawnCoin());
-        //  TODO: StartCoroutine(spawnProjectiles());
+        // TODO: use this section to initialize enviornment
     }
-
-    IEnumerator spawnCoin()
-    {
-        while (true)
-        {
-            if (gameReadyToStart && numOfCoins == 0)
-            {
-                Debug.Log("Spawning Coin Called");
-
-                /* TODO
-                // pick a location that is not the destination and the one right before
-                int[] excludeThis = { currentPlayerContProperty.currentDestinationIndex, currentPlayerContProperty.nextDestinationIndex };
-                int nextCoinIndex = Tools.randomNumberExcept(islandSpawns.Length, excludeThis);
-                Instantiate(coinObject, islandSpawns[nextCoinIndex] + coinOffset, coinObject.transform.rotation);
-                numOfCoins++;
-                */
-            }
-
-            // spawn coins based on island location, based on rates
-            yield return new WaitForSeconds(coinRespawnCooldown);
-        }
-    }
-
-    /* TODO: MOVE
-    IEnumerator spawnProjectiles()
-    {
-        while (true)
-        {
-            if (gameReadyToStart)
-            {
-                // pick one at random
-                spawnLocations[Random.Range(0, spawnLocations.Count)].spawnRandomly();
-            }
-
-            // spawn projectile based on island location, based on rates
-            yield return new WaitForSeconds(projectileRespawnCooldown);
-        }
-    }
-    */
-
+    
     /* public method to be called from other scripts for updates */
     public void playerStart()
     {
-        // Spawn a player 
-        if (currentPlayerContProperty == null)
+        if (gameReadyToStart)
         {
-            // reset values
-            score = 0;
-            scoreText.text = "0";
-            gameOverProperty = false;
-            gameOverText.enabled = false;
+            // Spawn a player 
+            if (currentPlayerContProperty == null)
+            {
+                // reset values
+                gameOverProperty = false;
+                gameOverText.enabled = false;
+                scoreUpdate(false, 0);
 
-            // spawn a plyaer
-            var player = Instantiate(playerPrefab, new Vector3(0, 1, 3), Quaternion.Euler(new Vector3(0, 45, 0)));
-            currentPlayerContProperty = player.GetComponent<PlayerController>();
+                // spawn a plyaer
+                var player = Instantiate(playerPrefab, new Vector3(0, 1, 3), Quaternion.Euler(new Vector3(0, 45, 0)));
+                currentPlayerContProperty = player.GetComponent<PlayerController>();
+            }
+
+            gameReadyToStart = false;
         }
-
-        // Game is ready to start
-        gameReadyToStart = true;
-    }
-
-    public void gainCoin(int scoreValue)
-    {
-        score += scoreValue;
-        scoreText.text = score.ToString();
-        numOfCoins--;
-        
-        Debug.Log("Coin Gained. CurrentScore[" + score + "], coinNum["  + numOfCoins + "]");
     }
     
     public void gameOverNow()
     {
+        gameReadyToStart = false;
+
         // display game over text
         gameOverProperty = true;
         gameOverText.enabled = true;
 
-        // TODO: check to see if the game is ready to be restarted, delay needed for each restart
+        // wait a bit before game restarts
+        StartCoroutine(gameReadyAfterADelay());
+    }
+
+    public void scoreUpdate(bool tureIfAdd_falseIfSet, float inputScore)
+    {
+        if (!gameOverProperty)
+        {
+            if (tureIfAdd_falseIfSet) score += inputScore;
+            else score = inputScore;
+
+            // integer score only
+            scoreText.text = Math.Abs(score).ToString("0.00"); // always positive score
+        }
+    }
+
+    IEnumerator gameReadyAfterADelay()
+    {
+        yield return new WaitForSeconds(delayBeforeGameStarts);
+
+        // Code to execute after the delay
+        gameReadyToStart = true;
     }
 }

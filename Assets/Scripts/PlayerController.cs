@@ -11,9 +11,6 @@ public class PlayerController : MonoBehaviour {
     void Start () {
         // get game controller
         gc = Tools.gc;
-
-        // first destination - first on the list
-        // TODO: nextDestination = gc.islandSpawns[0];
     }
 	
 	// Update is called once per frame

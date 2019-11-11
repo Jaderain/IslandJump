@@ -34,10 +34,12 @@ public class InputController : MonoBehaviour {
             // check if game over
             if (gc.gameOverProperty)
             {
+                // start a game if the game is over
                 gc.playerStart();
             }
             else
             {
+                // teleport foward if game is on going
                 isc.teleport(teleportDistance); 
             }
             
